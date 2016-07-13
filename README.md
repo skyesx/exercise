@@ -1,2 +1,2 @@
-# exercise
-my exercise
+# my portable exercise workspace
+workspace for little tests
