@@ -9,7 +9,7 @@ import java.util.LinkedList;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class ConnectionPoolTest {
+public class MyConnectionPoolImpl {
 	
 	public static class ConnectionPool{
 		
@@ -27,7 +27,6 @@ public class ConnectionPoolTest {
 				if(lstConn.size() != 0){
 					return lstConn.removeFirst();
 				}else{
-					//等待mills看看有没有归还的Connection
 					long currentTime = System.currentTimeMillis();
 					long expireTime = currentTime + mills;
 					while((currentTime = System.currentTimeMillis())  < expireTime && lstConn.size() != 0){
@@ -39,7 +38,6 @@ public class ConnectionPoolTest {
 						}
 					}
 					
-					//可能超时，可能有归还的连接
 					if(lstConn.size() != 0){
 						return lstConn.removeFirst();
 					}else{
