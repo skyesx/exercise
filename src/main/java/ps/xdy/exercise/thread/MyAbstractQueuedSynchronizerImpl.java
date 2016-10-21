@@ -1,6 +1,7 @@
 package ps.xdy.exercise.thread;
 
 import java.util.LinkedList;
+import java.util.concurrent.locks.LockSupport;
 
 import sun.misc.Unsafe;
 
@@ -29,6 +30,7 @@ public class MyAbstractQueuedSynchronizerImpl {
 	private volatile int state;
 	private volatile Node head;
 	private volatile Node tail;
+	private Thread exclusiveThread;
 	
 	private static class Node{
 		private Thread nodeThread;
@@ -93,9 +95,18 @@ public class MyAbstractQueuedSynchronizerImpl {
 		//if failed put it in synchronizer queue to wait for sync
 		Node node = addWaitNodeToQueue();
 		
-		//loop to acquire sync
+		//loop to acquire sync，if failed then sleep
 		for(;;){
-//			if(head == ) TODO to be finished
+			if(head == node.preNode && tryAcquire(acquire)){
+				exclusiveThread = Thread.currentThread();
+				node.preNode = null;//help GC
+				head = node;//flush to RAM
+				return;
+			}else{
+//				if(shouldPark(node)){
+//					LockSupport.park(node);
+//				}
+			}
 		}
 	}
 
