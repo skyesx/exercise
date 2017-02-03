@@ -6,40 +6,64 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
-import org.springframework.core.env.PropertySource;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.support.ResourcePropertySource;
 import org.springframework.stereotype.Service;
 
 @Service
 public class Demo {
 	
+	public Demo(){
+		System.out.println("Demo initing");
+	}
+	
+	private static class Temp{
+	}
+	
 	public static void main(String[] args) {
+		
 //		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("xml/applicationContext.xml");
 		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{"xml/applicationContext.xml"}, false);
+		
 		ctx.addBeanFactoryPostProcessor(new BeanFactoryPostProcessor() {
 			@Override
 			public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
-				System.out.println("Before bean init");
+				System.out.println("Before beanDefinition load");
 			}
 		});
 		
-		try {
-			ctx.getEnvironment().getPropertySources().addFirst(new ResourcePropertySource("properties/config.properties", Demo.class.getClassLoader()));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		try {
+//			ctx.getEnvironment().getPropertySources().addFirst(new ResourcePropertySource("properties/config.properties", Demo.class.getClassLoader()));
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+		ApplicationListener<?> listener = new ApplicationListener<ApplicationEvent>() {
+			
+			@Override
+			public void onApplicationEvent(ApplicationEvent event) {
+				
+				System.out.println(event.getClass().getSimpleName());
+				
+				if(event instanceof ContextRefreshedEvent){
+					ctx.getBeanFactory().registerSingleton("test", new Temp());
+				}
+			}
+		};
+		ctx.addApplicationListener(listener);
 		
 		ctx.refresh();
+		checkExist(ctx);
 		
 		
 		Environment environment = ctx.getEnvironment();
-		System.out.println(environment.getProperty("name"));
+		
+		System.out.println("environment property:" + environment.getProperty("name"));
 		
 		
 		Demo demo  = ctx.getBean(Demo.class);
@@ -48,7 +72,18 @@ public class Demo {
 		Demo2 demo2  = ctx.getBean(Demo2.class);
 		demo2.printHello();
 		
+		System.out.println("Resolver:" + ctx.getBeanFactory().resolveEmbeddedValue("I am the resolved value of name :${name}"));
+		
 		ctx.close();
+	}
+
+	private static void checkExist(ClassPathXmlApplicationContext ctx) {
+		Temp bean = ctx.getBean(Temp.class);
+		if(bean != null){
+			System.out.println("exist!");
+		}else{
+			System.out.println("not exist!");
+		}
 	}
 	
 	public void printHello(){

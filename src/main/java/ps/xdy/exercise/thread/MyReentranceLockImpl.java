@@ -20,7 +20,6 @@ public class MyReentranceLockImpl {
 	 */
 	public static class MyReentranceLock implements Lock{
 
-		
 		private static class Sync extends AbstractQueuedSynchronizer{
 
 			/**

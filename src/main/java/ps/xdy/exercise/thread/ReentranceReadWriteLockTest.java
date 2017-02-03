@@ -8,7 +8,7 @@ public class ReentranceReadWriteLockTest {
 	public static void main(String[] args) {
 		
 		
-		ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
+		final ReentrantReadWriteLock lock = new ReentrantReadWriteLock(true);
 
 		//shared signal test
 		lock.writeLock().lock();
