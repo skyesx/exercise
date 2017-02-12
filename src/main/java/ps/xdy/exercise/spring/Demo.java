@@ -1,7 +1,5 @@
 package ps.xdy.exercise.spring;
 
-import java.io.IOException;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
@@ -11,10 +9,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.env.Environment;
-import org.springframework.core.io.support.ResourcePropertySource;
-import org.springframework.stereotype.Service;
 
-@Service
 public class Demo {
 	
 	public Demo(){
@@ -90,7 +85,28 @@ public class Demo {
 		System.out.println("hello " + name);
 	}
 	
-	@Value("${name}")
+	
 	private String name;
+	
+	private String name2;
+
+	public String getName() {
+		return name;
+	}
+	
+	@Value("${name}")
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getName2() {
+		return name2;
+	}
+
+	public void setName2(String name2) {
+		this.name2 = name2;
+	}
+	
+	
 
 }

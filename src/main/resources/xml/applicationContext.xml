@@ -11,5 +11,7 @@
 <context:property-placeholder location="properties/config.properties"/>
 <!-- <context:property-placeholder properties-ref="flexProperties"/> -->
 
-
+<bean id="demo1Id" name="demo1Alias1,demo1Alias2" class="ps.xdy.exercise.spring.Demo">
+	<property name="name2" value="${name}"></property>
+</bean>
 </beans>
