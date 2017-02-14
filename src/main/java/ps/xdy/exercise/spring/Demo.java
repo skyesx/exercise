@@ -10,6 +10,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.core.env.Environment;
 
+
 public class Demo {
 	
 	public Demo(){
@@ -21,8 +22,23 @@ public class Demo {
 	
 	public static void main(String[] args) {
 		
-//		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("xml/applicationContext.xml");
-		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{"xml/applicationContext.xml"}, false);
+		class MyCtx extends ClassPathXmlApplicationContext{
+			public MyCtx(String[] paths,boolean refresh){
+				super(paths,refresh);
+			}
+			
+			@Override
+			protected void onRefresh() throws BeansException {
+				super.onRefresh();
+				
+//				Demo testProperiesSet = getBean(Demo.class);
+//				testProperiesSet.printHello();
+//				
+			}
+		}
+		
+//		ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext(new String[]{"xml/applicationContext.xml"}, false);
+		ClassPathXmlApplicationContext ctx = new MyCtx(new String[]{"xml/applicationContext.xml"}, false);
 		
 		ctx.addBeanFactoryPostProcessor(new BeanFactoryPostProcessor() {
 			@Override
@@ -64,8 +80,11 @@ public class Demo {
 		Demo demo  = ctx.getBean(Demo.class);
 		demo.printHello();
 		
-		Demo2 demo2  = ctx.getBean(Demo2.class);
+		Demo2 demo2  = ctx.getBean("demo2",Demo2.class);
 		demo2.printHello();
+		
+		Demo2Clild demo2Child = ctx.getBean(Demo2Clild.class);
+		demo2Child.printHello();
 		
 		System.out.println("Resolver:" + ctx.getBeanFactory().resolveEmbeddedValue("I am the resolved value of name :${name}"));
 		

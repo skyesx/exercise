@@ -5,6 +5,8 @@ import org.springframework.beans.factory.support.MergedBeanDefinitionPostProcess
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSON;
+
 @Service
 public class MergedBeanDefinitionPostProcessorTest implements MergedBeanDefinitionPostProcessor {
 
@@ -26,10 +28,7 @@ public class MergedBeanDefinitionPostProcessorTest implements MergedBeanDefiniti
 	public void postProcessMergedBeanDefinition(
 			RootBeanDefinition beanDefinition, Class<?> beanType,
 			String beanName) {
-		
-		
-		System.out.print(beanName + " MP:postProcessMergedBeanDefinition:");
-		System.out.println(beanDefinition + "  propertyValues:" + beanDefinition.getPropertyValues().toString());
+		System.out.println(String.format("%s  MP:postProcessMergedBeanDefinition:%s", beanName,JSON.toJSON(beanDefinition)));
 	}
 
 
